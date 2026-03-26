@@ -25,12 +25,16 @@ country_files = [
 ]
 
 
+DATA_FOLDER = "datafile"
+
 
 all_chars = set()
 name_list = []
 
 for filename, _ in country_files:
-    with open(filename, "r", encoding="utf-8") as f:
+
+    file_path = os.path.join(DATA_FOLDER, filename)
+    with open(file_path, "r", encoding="utf-8") as f:
         names = [line.strip() for line in f if line.strip()]
         for name in names:
             all_chars.update(name)
@@ -52,17 +56,18 @@ class NameOneHotDataset(Dataset):
         self.char_to_idx = char_to_idx
         self.num_countries = num_countries
         self.vocab_size = len(char_to_idx)
+        self.data_folder = DATA_FOLDER
 
-      
         for filename, label_idx in country_files:
-            with open(filename, "r", encoding="utf-8") as f:
+            file_path = os.path.join(self.data_folder, filename)
+            with open(file_path, "r", encoding="utf-8") as f:
                 names = [line.strip() for line in f if line.strip()]
             for name in names:
-               
+           
                 country_vec = torch.zeros(num_countries)
                 country_vec[label_idx] = 1.0
 
-                
+              
                 name_onehot = []
                 for c in name:
                     idx = char_to_idx[c]
@@ -82,10 +87,12 @@ class NameOneHotDataset(Dataset):
 
 dataset = NameOneHotDataset(country_files, char_to_idx, num_countries)
 
+
 x, y = dataset[0]
-print("Input (name one-hot tensor) shape:", x.shape)  
+
+print("Input (name one-hot tensor) shape:", x.shape) 
 print("Output (country label vector) shape:", y.shape)   
 print("Output vector content:", y)
 
-
+# DataLoader for training
 dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
