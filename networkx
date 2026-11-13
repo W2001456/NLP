@@ -1,16 +1,2 @@
 import networkx as nx
-import matplotlib.pyplot as plt
-
-G = nx.Graph()
-
-G.add_edge("AI", "LLM", weight=0.8)
-G.add_edge("AI", "RAG", weight=0.6)
-G.add_edge("LLM", "RAG", weight=0.5)
-
-
-communities = nx.community.louvain_communities(G, seed=42)
-print(communities)
-
-
-nx.draw(G, with_labels=True)
-plt.show()
+G = nx.path_graph(4)
